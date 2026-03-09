@@ -12,7 +12,7 @@ LDFLAGS = -g -N -Ttext=0x10000
 TARGET = kernel.elf
 
 # Object files
-OBJS = kernel.o boot.o box.o
+OBJS = kernel.o main.o boot.o box.o process.o queue.o process_asm.o
 
 # Libraries
 LIBS = libos.a
@@ -31,11 +31,23 @@ $(TARGET): $(OBJS) $(LIBS)
 kernel.o: kernel.c libos.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
+main.o: main.c queue.h process.h libos.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+process.o: process.c process.h queue.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+queue.o: queue.c queue.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
 # Assemble assembly files
 boot.o: boot.S
 	$(CC) $(ASFLAGS) -c $< -o $@
 
 box.o: box.S
+	$(CC) $(ASFLAGS) -c $< -o $@
+
+process_asm.o: process_asm.S
 	$(CC) $(ASFLAGS) -c $< -o $@
 
 # Include dependency files 
